@@ -1,0 +1,15 @@
+# Secrets
+.env
+
+# Local data artifacts
+nba_betting.db
+live_odds_cache.json
+models/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env.local
+venv/
+__pycache__/

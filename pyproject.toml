@@ -1,0 +1,23 @@
+[project]
+name = "nbabettingmodel"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.141.1",
+    "nba-api>=1.11.4",
+    "pandas>=3.0.5",
+    "python-dotenv>=1.2.3",
+    "requests>=2.34.2",
+    "scikit-learn>=1.9.0",
+    "streamlit>=1.62.0",
+    "uvicorn>=0.52.4",
+]
+
+[project.scripts]
+nbabettingmodel = "nbabettingmodel:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
