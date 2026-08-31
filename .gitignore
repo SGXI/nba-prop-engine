@@ -2,9 +2,13 @@
 .env
 
 # Local data artifacts
-nba_betting.db
+# nba_betting.db and models/ are intentionally NOT ignored -- Render (and
+# any other host) rebuilds the filesystem fresh from this repo on every
+# deploy, so the SQLite DB and the trained .joblib models have to ship with
+# the code or the API has no data/models to boot with. Only the Odds API
+# response cache stays ignored: it's a regenerating runtime artifact, not
+# data the app needs at startup.
 live_odds_cache.json
-models/
 
 # Python
 __pycache__/
