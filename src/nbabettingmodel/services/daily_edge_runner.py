@@ -83,6 +83,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import pandas as pd
+import requests
 from nba_api.stats.endpoints import scoreboardv2
 from nba_api.stats.static import teams as static_teams
 from scipy.stats import norm
@@ -149,11 +150,25 @@ def _team_id_to_abbr() -> dict[int, str]:
 # --------------------------------------------------------------------------------------
 
 def get_todays_matchups(game_date: str) -> dict[int, int]:
-    """One ScoreboardV2 call: map every team playing on `game_date` to their opponent's TEAM_ID."""
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", DeprecationWarning)
-        endpoint = scoreboardv2.ScoreboardV2(game_date=game_date, timeout=REQUEST_TIMEOUT)
-    games = endpoint.game_header.get_data_frame()
+    """One ScoreboardV2 call: map every team playing on `game_date` to their opponent's TEAM_ID.
+
+    Never raises -- a live stats.nba.com outage or timeout (this call has no
+    cache/fallback the way live_odds_client.fetch_live_odds() does) degrades
+    to "no games today" (an empty map) instead of taking down every endpoint
+    that calls this, directly or via get_players_scheduled_today(). This
+    matters even outside the offseason: stats.nba.com is known to intermittently
+    block or throttle requests from datacenter/cloud IP ranges (Render, AWS,
+    etc.) in ways a local dev machine never sees, so a request that always
+    succeeds locally can still time out or get blocked in production.
+    """
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            endpoint = scoreboardv2.ScoreboardV2(game_date=game_date, timeout=REQUEST_TIMEOUT)
+        games = endpoint.game_header.get_data_frame()
+    except (requests.RequestException, ValueError) as exc:
+        print(f"ScoreboardV2 request failed for {game_date} ({exc!r}); assuming no games today.")
+        return {}
 
     matchups: dict[int, int] = {}
     for _, game in games.iterrows():
