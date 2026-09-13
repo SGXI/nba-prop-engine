@@ -1,5 +1,6 @@
 "use client";
 
+import { ManageBillingButton } from "@/components/dashboard/manage-billing-button";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -46,11 +47,14 @@ export default function EVBoardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold tracking-tight">Daily +EV Board</h1>
-        <p className="text-sm text-muted-foreground">
-          Every prop bet on the slate that clears the model&apos;s expected-value threshold.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold tracking-tight">Daily +EV Board</h1>
+          <p className="text-sm text-muted-foreground">
+            Every prop bet on the slate that clears the model&apos;s expected-value threshold.
+          </p>
+        </div>
+        <ManageBillingButton />
       </div>
 
       <Card>

@@ -1,8 +1,7 @@
 "use server";
 
-import { stripe } from "@/lib/stripe";
+import { getBaseUrl, stripe } from "@/lib/stripe";
 import { auth } from "@clerk/nextjs/server";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 /** Server Functions are reachable via direct POST requests, not just
@@ -19,9 +18,7 @@ export async function createCheckoutSession() {
     throw new Error("STRIPE_PRICE_ID is not configured.");
   }
 
-  const host = (await headers()).get("host") ?? "localhost:3000";
-  const protocol = host.startsWith("localhost") ? "http" : "https";
-  const baseUrl = `${protocol}://${host}`;
+  const baseUrl = await getBaseUrl();
 
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
